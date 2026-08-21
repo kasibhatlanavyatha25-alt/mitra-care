@@ -14,16 +14,381 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json
+        }
+        Relationships: []
+      }
+      clinical_records: {
+        Row: {
+          created_at: string
+          extraction_model: string | null
+          id: string
+          interview_id: string
+          missing_information: Json
+          patient_id: string
+          standardized: Json
+          structured: Json
+          summary: string | null
+          uncertainties: Json
+        }
+        Insert: {
+          created_at?: string
+          extraction_model?: string | null
+          id?: string
+          interview_id: string
+          missing_information?: Json
+          patient_id: string
+          standardized?: Json
+          structured?: Json
+          summary?: string | null
+          uncertainties?: Json
+        }
+        Update: {
+          created_at?: string
+          extraction_model?: string | null
+          id?: string
+          interview_id?: string
+          missing_information?: Json
+          patient_id?: string
+          standardized?: Json
+          structured?: Json
+          summary?: string | null
+          uncertainties?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_records_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: true
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_records_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doctor_reviews: {
+        Row: {
+          ai_priority: Database["public"]["Enums"]["triage_priority"] | null
+          created_at: string
+          decision: Database["public"]["Enums"]["doctor_decision"]
+          doctor_id: string
+          doctor_priority: Database["public"]["Enums"]["triage_priority"] | null
+          id: string
+          interview_id: string
+          reason: string | null
+          requested_information: string | null
+        }
+        Insert: {
+          ai_priority?: Database["public"]["Enums"]["triage_priority"] | null
+          created_at?: string
+          decision: Database["public"]["Enums"]["doctor_decision"]
+          doctor_id: string
+          doctor_priority?:
+            | Database["public"]["Enums"]["triage_priority"]
+            | null
+          id?: string
+          interview_id: string
+          reason?: string | null
+          requested_information?: string | null
+        }
+        Update: {
+          ai_priority?: Database["public"]["Enums"]["triage_priority"] | null
+          created_at?: string
+          decision?: Database["public"]["Enums"]["doctor_decision"]
+          doctor_id?: string
+          doctor_priority?:
+            | Database["public"]["Enums"]["triage_priority"]
+            | null
+          id?: string
+          interview_id?: string
+          reason?: string | null
+          requested_information?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_reviews_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interviews: {
+        Row: {
+          audio_duration_seconds: number | null
+          audio_path: string | null
+          created_at: string
+          id: string
+          input_mode: string
+          is_demo: boolean
+          language: string
+          patient_id: string
+          status: Database["public"]["Enums"]["interview_status"]
+          transcript: string | null
+          transcript_provider: string | null
+          updated_at: string
+        }
+        Insert: {
+          audio_duration_seconds?: number | null
+          audio_path?: string | null
+          created_at?: string
+          id?: string
+          input_mode?: string
+          is_demo?: boolean
+          language: string
+          patient_id: string
+          status?: Database["public"]["Enums"]["interview_status"]
+          transcript?: string | null
+          transcript_provider?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audio_duration_seconds?: number | null
+          audio_path?: string | null
+          created_at?: string
+          id?: string
+          input_mode?: string
+          is_demo?: boolean
+          language?: string
+          patient_id?: string
+          status?: Database["public"]["Enums"]["interview_status"]
+          transcript?: string | null
+          transcript_provider?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interviews_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_responses: {
+        Row: {
+          created_at: string
+          id: string
+          input_type: string
+          interview_id: string
+          raw_text: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          input_type: string
+          interview_id: string
+          raw_text?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          input_type?: string
+          interview_id?: string
+          raw_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_responses_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patients: {
+        Row: {
+          created_at: string
+          id: string
+          patient_code: string
+          profile_id: string
+          sex: string | null
+          year_of_birth: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          patient_code?: string
+          profile_id: string
+          sex?: string | null
+          year_of_birth?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          patient_code?: string
+          profile_id?: string
+          sex?: string | null
+          year_of_birth?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          preferred_language: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          preferred_language?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          preferred_language?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      triage_assessments: {
+        Row: {
+          clinical_record_id: string | null
+          created_at: string
+          evidence: Json
+          id: string
+          interview_id: string
+          model_available: boolean
+          model_name: string | null
+          model_version: string | null
+          notes: string | null
+          priority: Database["public"]["Enums"]["triage_priority"] | null
+          red_flags: Json
+        }
+        Insert: {
+          clinical_record_id?: string | null
+          created_at?: string
+          evidence?: Json
+          id?: string
+          interview_id: string
+          model_available?: boolean
+          model_name?: string | null
+          model_version?: string | null
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["triage_priority"] | null
+          red_flags?: Json
+        }
+        Update: {
+          clinical_record_id?: string | null
+          created_at?: string
+          evidence?: Json
+          id?: string
+          interview_id?: string
+          model_available?: boolean
+          model_name?: string | null
+          model_version?: string | null
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["triage_priority"] | null
+          red_flags?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "triage_assessments_clinical_record_id_fkey"
+            columns: ["clinical_record_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "triage_assessments_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: true
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      current_patient_id: { Args: never; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "patient" | "doctor" | "admin"
+      doctor_decision: "ACCEPT" | "OVERRIDE" | "REQUEST_INFO"
+      interview_status:
+        | "DRAFT"
+        | "TRANSCRIBED"
+        | "EXTRACTED"
+        | "TRIAGED"
+        | "SUBMITTED"
+        | "REVIEWED"
+        | "INFO_REQUESTED"
+      triage_priority: "RED" | "AMBER" | "GREEN"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +515,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["patient", "doctor", "admin"],
+      doctor_decision: ["ACCEPT", "OVERRIDE", "REQUEST_INFO"],
+      interview_status: [
+        "DRAFT",
+        "TRANSCRIBED",
+        "EXTRACTED",
+        "TRIAGED",
+        "SUBMITTED",
+        "REVIEWED",
+        "INFO_REQUESTED",
+      ],
+      triage_priority: ["RED", "AMBER", "GREEN"],
+    },
   },
 } as const
